@@ -60,6 +60,7 @@ class FocusSession {
   }
 
   /// Get the actual duration of the session
+  @ignore
   Duration get actualDuration {
     final end = endTime ?? DateTime.now();
     return end.difference(startTime);

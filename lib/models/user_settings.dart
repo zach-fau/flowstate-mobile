@@ -45,6 +45,7 @@ class UserSettings {
   }
 
   /// Get sound volumes as a Map
+  @ignore
   Map<String, double> get soundVolumes {
     if (soundVolumesJson.isEmpty || soundVolumesJson == '{}') {
       return {};

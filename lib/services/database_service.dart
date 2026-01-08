@@ -7,6 +7,9 @@ import '../models/user_settings.dart';
 class DatabaseService {
   static Isar? _isar;
 
+  /// Check if database is initialized
+  static bool get isInitialized => _isar != null;
+
   /// Get the Isar instance (must call initialize first)
   static Isar get instance {
     if (_isar == null) {
@@ -85,6 +88,17 @@ class DatabaseService {
         .notesContains(query, caseSensitive: false)
         .sortByStartTimeDesc()
         .findAll();
+  }
+
+  /// Find session by session ID
+  static Future<FocusSession?> findSessionById(String sessionId) async {
+    final sessions = await instance.focusSessions
+        .filter()
+        .sessionIdEqualTo(sessionId)
+        .sortByStartTimeDesc()
+        .limit(1)
+        .findAll();
+    return sessions.isEmpty ? null : sessions.first;
   }
 
   /// Delete a session

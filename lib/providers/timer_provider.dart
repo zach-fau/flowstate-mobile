@@ -172,6 +172,8 @@ class TimerNotifier extends StateNotifier<TimerStatus> {
   }
 
   Future<void> _createSession(String sessionId) async {
+    if (!DatabaseService.isInitialized) return;
+
     final session = FocusSession.create(
       sessionId: sessionId,
       durationMinutes: state.totalSeconds ~/ 60,
@@ -181,26 +183,20 @@ class TimerNotifier extends StateNotifier<TimerStatus> {
   }
 
   Future<void> _completeSession(String sessionId, String? notes) async {
-    final sessions = await DatabaseService.instance.focusSessions
-        .filter()
-        .sessionIdEqualTo(sessionId)
-        .findAll();
+    if (!DatabaseService.isInitialized) return;
 
-    if (sessions.isNotEmpty) {
-      final session = sessions.first;
+    final session = await DatabaseService.findSessionById(sessionId);
+    if (session != null) {
       session.complete(notes: notes);
       await DatabaseService.saveSession(session);
     }
   }
 
   Future<void> _cancelSession(String sessionId) async {
-    final sessions = await DatabaseService.instance.focusSessions
-        .filter()
-        .sessionIdEqualTo(sessionId)
-        .findAll();
+    if (!DatabaseService.isInitialized) return;
 
-    if (sessions.isNotEmpty) {
-      final session = sessions.first;
+    final session = await DatabaseService.findSessionById(sessionId);
+    if (session != null) {
       session.cancel();
       await DatabaseService.saveSession(session);
     }
